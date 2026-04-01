@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Board {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  columns   Column[]
+}
+
+model Column {
+  id           Int      @id @default(autoincrement())
+  boardId      Int
+  name         String
+  displayOrder Int
+  createdAt    DateTime @default(now())
+  board        Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  tasks        Task[]
+
+  @@index([boardId])
+  @@unique([boardId, displayOrder])
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  columnId    Int
+  title       String
+  description String?
+  priority    Priority @default(MEDIUM)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  column      Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
+
+  @@index([columnId])
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
