@@ -1,107 +1,121 @@
-## Technical Challenge — Mid-Level
+# Kanban Fullstack Challenge
 
-### Background
+Aplicacion full stack tipo Kanban construida con:
 
-A small project management startup wants to build a simple internal tool for their team to organize work visually. They need a basic task board where team members can create boards, organize tasks into columns, and move tasks between stages.
+- **Runtime:** Bun (compatible tambien con npm)
+- **Framework:** Next.js App Router
+- **DB:** SQLite + Prisma
+- **UI:** Tailwind CSS puro (sin shadcn/ui)
 
-In this challenge, you'll build a simplified task board application with a REST API, a database, and a functional UI.
+## Features implementadas
 
-We are **not evaluating specific tools or patterns**. We simply want to understand how you think, how you code, and how you approach real-world problems. Be yourself.
+- Crear y listar boards
+- Ver board con columnas y tareas en layout Kanban
+- Crear columnas por board con `displayOrder`
+- Crear tareas por columna
+- Editar tarea (titulo + descripcion)
+- Mover tarea entre columnas (dropdown)
+- Eliminar tarea
+- Loading states y empty states en pantallas principales
 
+## Modelo de datos
 
-### What You Need to Build
+`Board -> Column -> Task`
 
-A functional **full stack application** with the ability to:
+- **Board:** `id`, `name`, `createdAt`
+- **Column:** `id`, `boardId`, `name`, `displayOrder`, `createdAt`
+- **Task:** `id`, `columnId`, `title`, `description`, `priority`, `createdAt`, `updatedAt`
+- **Priority enum:** `LOW | MEDIUM | HIGH`
 
-1. Create and view boards
-2. Add columns to a board
-3. Create, update, and delete tasks within columns
-4. Move tasks between columns
-5. View a board in a kanban-style layout
+## Endpoints API
 
+Todos devuelven un formato consistente:
 
-### Database Schema
+- Success: `{ "success": true, "data": ... }`
+- Error: `{ "success": false, "error": { "code": "...", "message": "...", "details": ... } }`
 
-Design the schema yourself. At minimum, you should support:
+Endpoints requeridos:
 
-- **Boards** with a name and creation date
-- **Columns** belonging to a board, with a name and display order
-- **Tasks** belonging to a column, with: title, description, priority, and creation date
+- `GET /api/boards`
+- `POST /api/boards`
+- `GET /api/boards/:id`
+- `POST /api/columns`
+- `POST /api/tasks`
+- `PATCH /api/tasks/:id`
+- `DELETE /api/tasks/:id`
 
-Include appropriate indexes and a seed script that creates one board with sample data.
+Validacion implementada en cada endpoint con Zod. Se usan estados HTTP de error apropiados (`400`, `404`, `409`, `500`).
 
+## Correr el proyecto
 
-### Tech Stack
+### 1) Instalar dependencias
 
-#### Backend
+```bash
+npm install
+```
 
-* Runtime: **Bun**
-* Framework: **Next.js** (App Router)
-* Database: **SQLite** (ORM, query builder, or raw SQL — your choice)
+o con Bun:
 
-#### Frontend
+```bash
+bun install
+```
 
-* Framework: **Next.js**
-* Styling: **TailwindCSS**
-* Additional UI libraries are welcome but not required
+### 2) Configurar y migrar base de datos
 
+El proyecto incluye `.env` con:
 
-### Required API Endpoints
+```env
+DATABASE_URL="file:./dev.db"
+```
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/boards` | List all boards |
-| POST | `/api/boards` | Create a board |
-| GET | `/api/boards/:id` | Get a board with its columns and tasks |
-| POST | `/api/columns` | Create a column (linked to a board) |
-| POST | `/api/tasks` | Create a task (linked to a column) |
-| PATCH | `/api/tasks/:id` | Update a task (title, description, move to another column) |
-| DELETE | `/api/tasks/:id` | Delete a task |
+Ejecuta migraciones:
 
-- Validate input on every endpoint.
-- Return proper HTTP status codes (400, 404, etc.).
-- Use a consistent JSON response structure.
+```bash
+npm run db:migrate
+```
 
+### 3) Levantar entorno local
 
-### Required UI
+```bash
+npm run dev
+```
 
-1. A page showing a board in **kanban-style layout** (columns side by side, tasks as cards)
-2. Ability to **create a new task** via a modal or dialog
-3. Ability to **move a task** between columns (a simple dropdown is fine, no drag-and-drop required)
-4. Loading and empty states
+o:
 
+```bash
+bun dev
+```
 
-### Submission Instructions
+Abrir [http://localhost:3000](http://localhost:3000).
 
-* **Fork this repository**, complete your work, and **submit a pull request**.
-* Include a `README.md` with:
-  * Clear instructions to run the project locally
-  * A short explanation of your architecture or design decisions
-  * A seed script to preload sample data
+## Scripts utiles
 
+- `npm run dev`
+- `npm run build`
+- `npm run lint`
+- `npm run db:generate`
+- `npm run db:migrate`
+- `npm run db:studio`
 
-### Time Expectation
+## Decisiones y trade-offs
 
-You should spend no more than **2 hours** on this task.
+- **Prisma + SQLite:** prioriza rapidez de desarrollo y claridad de esquema para challenge.
+- **Route Handlers en App Router:** unifica frontend y backend en una sola app.
+- **Validacion centralizada (`lib/validation.ts`):** menos duplicacion y errores de contrato.
+- **Respuesta JSON uniforme:** facilita manejo de errores en cliente.
+- **UI modular en componentes Kanban:** separacion clara entre board/column/task/modal.
+- **Sin drag & drop:** se usa selector para mover tareas (scope acotado, menos complejidad).
 
-Don't worry if you can't finish everything. What matters most is **how far you get** and **how you approach the problem**.
+## Nota de uso de IA
 
+Se utilizo asistencia de IA para:
 
-### Evaluation & Guidance
+- definir estructura inicial de arquitectura,
+- acelerar implementacion de endpoints y componentes UI,
+- revisión de consistencia y errores de build.
 
-What we mainly evaluate:
+Despues de la asistencia se realizaron ajustes manuales para:
 
-- Solution design and structure (architecture, modularity, separation of concerns).
-- Clarity of reasoning and documentation (decisions, trade-offs, assumptions).
-- Code quality (readability, consistency, error handling, good practices).
-- API design (RESTful conventions, validation, error responses).
-- UI completeness and usability.
-- Git workflow (incremental commits with clear messages).
-- Prioritization and scope management: it's valid to leave items pending if you explain what and why.
-
-Use of AI (optional but allowed):
-
-- You may use AI tools (e.g., Claude, Copilot, ChatGPT, Cursor) to assist with your solution.
-- We care most about how you structure the solution and explain your decisions.
-- If you used AI, add a brief note in your PR/README: which tools you used, which parts were assisted, and what changes you made after review.
-- Only include code you understand and can justify.
+- adaptar Prisma 7 + SQLite adapter,
+- corregir imports cliente/servidor para evitar bundling de Prisma en frontend,
+- alinear la UI al estilo de referencia solicitado con Tailwind puro.
