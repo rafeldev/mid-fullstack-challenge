@@ -1,22 +1,22 @@
 # Kanban Fullstack Challenge
 
-Aplicacion full stack tipo Kanban construida con:
+App full stack tipo Kanban hecha para el challenge técnico.
 
-- **Runtime:** Bun (compatible tambien con npm)
+- **Runtime:** Bun (también corre con npm)
 - **Framework:** Next.js App Router
-- **DB:** SQLite + Prisma
+- **Base de datos:** SQLite + Prisma
 - **UI:** Tailwind CSS puro (sin shadcn/ui)
 
-## Features implementadas
+## Qué incluye
 
 - Crear y listar boards
-- Ver board con columnas y tareas en layout Kanban
+- Ver un board en formato Kanban (columnas + tarjetas)
 - Crear columnas por board con `displayOrder`
 - Crear tareas por columna
-- Editar tarea (titulo + descripcion)
-- Mover tarea entre columnas (dropdown)
+- Editar tarea (título y descripción)
+- Mover tarea entre columnas con dropdown
 - Eliminar tarea
-- Loading states y empty states en pantallas principales
+- Estados de carga y estados vacíos en UI
 
 ## Modelo de datos
 
@@ -27,14 +27,14 @@ Aplicacion full stack tipo Kanban construida con:
 - **Task:** `id`, `columnId`, `title`, `description`, `priority`, `createdAt`, `updatedAt`
 - **Priority enum:** `LOW | MEDIUM | HIGH`
 
-## Endpoints API
+## API
 
-Todos devuelven un formato consistente:
+Todas las rutas responden con un formato consistente:
 
-- Success: `{ "success": true, "data": ... }`
+- Éxito: `{ "success": true, "data": ... }`
 - Error: `{ "success": false, "error": { "code": "...", "message": "...", "details": ... } }`
 
-Endpoints requeridos:
+Rutas implementadas:
 
 - `GET /api/boards`
 - `POST /api/boards`
@@ -44,9 +44,9 @@ Endpoints requeridos:
 - `PATCH /api/tasks/:id`
 - `DELETE /api/tasks/:id`
 
-Validacion implementada en cada endpoint con Zod. Se usan estados HTTP de error apropiados (`400`, `404`, `409`, `500`).
+Cada endpoint valida entrada con Zod y devuelve códigos HTTP correctos (`400`, `404`, `409`, `500`).
 
-## Correr el proyecto
+## Cómo correr el proyecto
 
 ### 1) Instalar dependencias
 
@@ -62,13 +62,13 @@ bun install
 
 ### 2) Configurar y migrar base de datos
 
-El proyecto incluye `.env` con:
+En `.env` se usa:
 
 ```env
 DATABASE_URL="file:./dev.db"
 ```
 
-Ejecuta migraciones:
+Luego corre migraciones:
 
 ```bash
 npm run db:migrate
@@ -86,9 +86,9 @@ o:
 bun dev
 ```
 
-Abrir [http://localhost:3000](http://localhost:3000).
+Abre [http://localhost:3000](http://localhost:3000).
 
-## Scripts utiles
+## Scripts útiles
 
 - `npm run dev`
 - `npm run build`
@@ -97,25 +97,25 @@ Abrir [http://localhost:3000](http://localhost:3000).
 - `npm run db:migrate`
 - `npm run db:studio`
 
-## Decisiones y trade-offs
+## Decisiones de implementación
 
-- **Prisma + SQLite:** prioriza rapidez de desarrollo y claridad de esquema para challenge.
-- **Route Handlers en App Router:** unifica frontend y backend en una sola app.
-- **Validacion centralizada (`lib/validation.ts`):** menos duplicacion y errores de contrato.
-- **Respuesta JSON uniforme:** facilita manejo de errores en cliente.
-- **UI modular en componentes Kanban:** separacion clara entre board/column/task/modal.
-- **Sin drag & drop:** se usa selector para mover tareas (scope acotado, menos complejidad).
+- **Prisma + SQLite:** fue la opción más rápida para tener esquema claro y migraciones simples.
+- **Route Handlers en App Router:** backend y frontend viven en el mismo proyecto.
+- **Validación centralizada (`lib/validation.ts`):** evita repetir reglas en cada endpoint.
+- **Respuesta JSON uniforme:** simplifica manejo de éxito/error en cliente.
+- **UI modular:** separación clara en `board`, `column`, `task`, `modal`.
+- **Sin drag and drop:** para este alcance, el dropdown cubre el requisito con menos complejidad.
 
 ## Nota de uso de IA
 
-Se utilizo asistencia de IA para:
+Se usó IA para:
 
-- definir estructura inicial de arquitectura,
-- acelerar implementacion de endpoints y componentes UI,
-- revisión de consistencia y errores de build.
+- proponer la estructura inicial,
+- acelerar la implementación de endpoints y componentes,
+- revisar errores de build y consistencia.
 
-Despues de la asistencia se realizaron ajustes manuales para:
+Después se hicieron ajustes manuales en:
 
-- adaptar Prisma 7 + SQLite adapter,
-- corregir imports cliente/servidor para evitar bundling de Prisma en frontend,
-- alinear la UI al estilo de referencia solicitado con Tailwind puro.
+- integración de Prisma 7 con SQLite adapter,
+- imports cliente/servidor para evitar bundling de Prisma en frontend,
+- ajuste visual final para respetar la referencia y mantener Tailwind puro.
