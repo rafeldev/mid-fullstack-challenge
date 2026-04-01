@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+:root {
+  --surface-0: #f5f7fb;
+  --surface-1: #f8faff;
+  --surface-2: #ffffff;
+
+  --text-primary: #1f2430;
+  --text-secondary: #334155;
+  --text-tertiary: #667085;
+
+  --border-base: rgba(100, 116, 139, 0.22);
+  --border-soft: rgba(100, 116, 139, 0.15);
+  --border-strong: rgba(76, 89, 128, 0.4);
+
+  --brand-main: #4f46e5;
+  --brand-main-strong: #4338ca;
+  --control-bg: #f3f6ff;
+}
+
+@theme inline {
+  --color-background: var(--surface-0);
+  --color-foreground: var(--text-primary);
+  --font-sans: var(--font-sora);
+  --font-mono: var(--font-ibm-plex-mono);
+}
+
+body {
+  background: var(--surface-0);
+  color: var(--text-primary);
+  font-family: var(--font-sora), sans-serif;
+}
